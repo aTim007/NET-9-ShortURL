@@ -1,4 +1,11 @@
+using ShortUrl.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+//подключение БД
+//string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+//builder.Services.AddDbContext<URLContext>(options => options.UseMySQL(connection));
 
 // Add services to the container.
 builder.Services.AddMvc(options =>

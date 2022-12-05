@@ -1,6 +1,5 @@
-﻿@model ShortUrl.Models.URL;
-
-@*@model IEnumerable<URL>
+﻿
+@model IEnumerable<ShortUrl.Models.URL>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -8,14 +7,12 @@
 <table class="table">
     <thead>
         <tr>
+            
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                @Html.DisplayNameFor(model => model.FullURL)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FullUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ShortUrl)
+                @Html.DisplayNameFor(model => model.ShortURL)
             </th>
             <th></th>
         </tr>
@@ -24,14 +21,12 @@
         @foreach (var item in Model)
         {
             <tr>
+                
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
+                    @Html.DisplayFor(modelItem => item.FullURL)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FullUrl)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ShortUrl)
+                    @Html.DisplayFor(modelItem => item.ShortURL)
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
@@ -42,11 +37,11 @@
         }
     </tbody>
 </table>
-*@
+
 
 <p>Введите ссылку:</p>
 <form method="post" action="">
-    <input id="FullURL" type="text" name="FullURL" value="@Model.FullURL">
+    <input id="FullURL" type="text" name="FullURL" >
     <input type="submit" value="Сократить">
 </form>
-<p>@Model.ShortURL</p>
+@*<p>@Model.ShortURL</p> value="@Model.FullURL"*@
