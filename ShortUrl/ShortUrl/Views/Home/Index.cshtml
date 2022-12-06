@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<ShortUrl.Models.URL>
+@*@model IEnumerable<ShortUrl.Models.URL>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -38,14 +38,11 @@
     </tbody>
 </table>
 
-@{
-    ViewData["message"] = "";
-}
+*@
 
 <p>Введите ссылку:</p>
 <form method="post" action="">
-    <input id="FullURL" type="text" name="FullURL" >
+    <input id="URL" type="text" name="FullURL" value="@ViewData["ShortURL"]">
     <input type="submit" value="Сократить">
 </form>
 @*<p>@Model.ShortURL</p> value="@Model.FullURL"*@
-<p> @ViewData["message"]</p>

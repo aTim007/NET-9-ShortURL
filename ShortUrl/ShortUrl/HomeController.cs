@@ -9,6 +9,7 @@ using System.IO.Hashing;
 using Crc32 = System.IO.Hashing.Crc32;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 
 namespace ShortUrl
 {
@@ -25,9 +26,7 @@ namespace ShortUrl
             if (!string.IsNullOrEmpty(item.FullURL))
             {
                 //todo: подумать, где лучше обрезать ссылку
-                
-                item.ChangeFullURL();
-
+                            
                 //хэш полной ссылки
                 if (string.IsNullOrEmpty(item.ShortURL)) item.HashURL();
 
@@ -46,13 +45,12 @@ namespace ShortUrl
                     item.RepeatHashURL();
                     return Index(item);
                 }
-               
+                if (!string.IsNullOrEmpty(item.ShortURL)) ViewData["ShortURL"] = "http://localhost:5045/" + item.ShortURL;
             }
-            ViewData["message"] = "yes";
-            return View(db.Urls.ToList());
+            //return View(db.Urls.ToList());
             //ViewData["Title"] = "Home page";
             //return View(item);
-            //return Ok(item);          
+            return Ok(item);          
         }
 
         // POST: HomeController
@@ -64,8 +62,8 @@ namespace ShortUrl
                 if (!string.IsNullOrEmpty(item.FullURL))
                 {
                     item.HashURL();
-                    //return Ok(item);
-                    return RedirectToAction(nameof(Index), routeValues: item);
+                    return Ok(item);
+                    //return RedirectToAction(nameof(Index), routeValues: item);
                 } else
                 return Redirect("home");
 			}

@@ -76,6 +76,7 @@ namespace ShortUrl.Models
             int i = FullURL.IndexOf("://");
             FullURL = i != -1 ? FullURL.Substring(i + 3) : FullURL;
         }
+
 	}
 
 	public class URLContext : DbContext

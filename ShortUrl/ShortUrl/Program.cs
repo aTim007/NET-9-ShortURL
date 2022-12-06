@@ -1,5 +1,6 @@
 using ShortUrl.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,13 @@ builder.Services.AddMvc(options =>
 	options.EnableEndpointRouting = false;
 });
 //builder.Services.AddRazorPages();
+//todo: Поменяли кодировку заголовка
+builder.WebHost.ConfigureKestrel(options =>
+{
+	options.RequestHeaderEncodingSelector = (_) => Encoding.UTF8;
+	options.ResponseHeaderEncodingSelector = (_) => Encoding.UTF8;
 
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
