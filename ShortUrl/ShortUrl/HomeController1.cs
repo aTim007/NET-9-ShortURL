@@ -10,20 +10,16 @@ namespace ShortUrl
     {
         [HttpGet]
         public IActionResult Index(string ShortURL)
-        {
-            //return View();
+        {            
             using var db = new URLContext();
             var query = db.Urls
                 .Where(b => b.ShortURL == ShortURL)
                 .FirstOrDefault();
 
-            if (query != null)
-            {
-                return Redirect("http://" + query.FullURL.ToString());
-            }
-
-            //todo: доделать переход на полную ссылку
-            return Redirect("http://" + query.FullURL.ToString());
+            //return query != null ? ( Redirect("http://" + (i != -1 ? query.FullURL.Substring(i): query.FullURL.ToString()))) : Redirect("home");
+            
+            return query!=null? Redirect("http://" + query.FullURL) : Redirect("home");
+                       
             // return View();
         }
 

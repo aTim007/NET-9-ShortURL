@@ -18,16 +18,18 @@ namespace ShortUrl
         [HttpGet]
         public IActionResult Index([FromQuery] URL? item)
         {
-            item ??= new URL
-            {
-                FullURL = string.Empty,
-                ShortURL = string.Empty,
-            };
+            item ??= new();
+
             using var db = new URLContext();
+
             if (!string.IsNullOrEmpty(item.FullURL))
             {
-                var a = Crc32.Hash(Encoding.UTF8.GetBytes(item.FullURL));
-                item.ShortURL = Encoding.UTF8.GetString(a);
+                //todo: подумать, где лучше обрезать ссылку
+                
+                item.ChangeFullURL();
+
+                //хэш полной ссылки
+                if (string.IsNullOrEmpty(item.ShortURL)) item.HashURL();
 
                 var query = db.Urls
                     .Where(b => b.ShortURL== item.ShortURL)
@@ -39,10 +41,15 @@ namespace ShortUrl
                     db.Urls.Add(url1);
                     db.SaveChanges();
                 }
+                else if (query.FullURL != item.FullURL)
+                {
+                    item.RepeatHashURL();
+                    return Index(item);
+                }
                
             }
+            ViewData["message"] = "yes";
             return View(db.Urls.ToList());
-            // return View(item);
             //ViewData["Title"] = "Home page";
             //return View(item);
             //return Ok(item);          
@@ -53,11 +60,14 @@ namespace ShortUrl
 		public ActionResult Create([FromForm] URL item)
 		{
 			try
-			{
-				var a = Crc32.Hash(Encoding.UTF8.GetBytes(item.FullURL));
-				item.ShortURL = Encoding.UTF8.GetString(a);
-				//return Ok(item);
-                return RedirectToAction(nameof(Index), routeValues: item);
+			{   item ??= new();
+                if (!string.IsNullOrEmpty(item.FullURL))
+                {
+                    item.HashURL();
+                    //return Ok(item);
+                    return RedirectToAction(nameof(Index), routeValues: item);
+                } else
+                return Redirect("home");
 			}
 			catch
 			{

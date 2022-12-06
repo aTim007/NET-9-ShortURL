@@ -38,6 +38,9 @@
     </tbody>
 </table>
 
+@{
+    ViewData["message"] = "";
+}
 
 <p>Введите ссылку:</p>
 <form method="post" action="">
@@ -45,3 +48,4 @@
     <input type="submit" value="Сократить">
 </form>
 @*<p>@Model.ShortURL</p> value="@Model.FullURL"*@
+<p> @ViewData["message"]</p>
