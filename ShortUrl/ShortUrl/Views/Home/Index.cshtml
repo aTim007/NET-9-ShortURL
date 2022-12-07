@@ -1,4 +1,10 @@
-﻿
+﻿<p>Введите ссылку:</p>
+<form method="post" action="">
+	<input id="URL" type="text" name="FullURL" value="@ViewData["ShortURL"]">
+	<input type="submit" value="Сократить">
+</form>
+
+@*отображение таблицы ссылок в БД *@
 @*@model IEnumerable<ShortUrl.Models.URL>
 
 <p>
@@ -7,7 +13,7 @@
 <table class="table">
     <thead>
         <tr>
-            
+
             <th>
                 @Html.DisplayNameFor(model => model.FullURL)
             </th>
@@ -21,7 +27,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                
+
                 <td>
                     @Html.DisplayFor(modelItem => item.FullURL)
                 </td>
@@ -39,10 +45,3 @@
 </table>
 
 *@
-
-<p>Введите ссылку:</p>
-<form method="post" action="">
-    <input id="URL" type="text" name="FullURL" value="@ViewData["ShortURL"]">
-    <input type="submit" value="Сократить">
-</form>
-@*<p>@Model.ShortURL</p> value="@Model.FullURL"*@

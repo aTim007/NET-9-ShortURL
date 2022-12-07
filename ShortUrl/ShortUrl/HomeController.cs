@@ -1,21 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NuGet.Packaging.Signing;
 using ShortUrl.Models;
-using System.Net.Security;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Policy;
-using System.IO.Hashing;
-using Crc32 = System.IO.Hashing.Crc32;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol;
 
 namespace ShortUrl
 {
-	[Route("/home")]
-	public class HomeController : Controller
-	{       
+    [Route("/home")]
+    public class HomeController : Controller
+    {
         [HttpGet]
         public IActionResult Index([FromQuery] URL? item)
         {
@@ -26,12 +16,12 @@ namespace ShortUrl
             if (!string.IsNullOrEmpty(item.FullURL))
             {
                 //todo: подумать, где лучше обрезать ссылку
-                            
+
                 //хэш полной ссылки
                 if (string.IsNullOrEmpty(item.ShortURL)) item.HashURL();
 
                 var query = db.Urls
-                    .Where(b => b.ShortURL== item.ShortURL)
+                    .Where(b => b.ShortURL == item.ShortURL)
                     .FirstOrDefault();
 
                 if (query == null)
@@ -48,32 +38,30 @@ namespace ShortUrl
                 if (!string.IsNullOrEmpty(item.ShortURL)) ViewData["ShortURL"] = "http://localhost:5045/" + item.ShortURL;
             }
             //return View(db.Urls.ToList());
-            //ViewData["Title"] = "Home page";
             //return View(item);
-            return Ok(item);          
+            return Ok(item);
         }
 
         // POST: HomeController
         [HttpPost]
-		public ActionResult Create([FromForm] URL item)
-		{
-			try
-			{   item ??= new();
+        public ActionResult Create([FromForm] URL item)
+        {
+            try
+            {
+                item ??= new();
                 if (!string.IsNullOrEmpty(item.FullURL))
                 {
                     item.HashURL();
                     return Ok(item);
                     //return RedirectToAction(nameof(Index), routeValues: item);
-                } else
-                return Redirect("home");
-			}
-			catch
-			{
-				return View();
-			}
-		}
-
-		
-
+                }
+                else
+                    return Redirect("home");
+            }
+            catch
+            {
+                return View();
+            }
+        }
     }
 }
