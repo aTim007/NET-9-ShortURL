@@ -15,9 +15,6 @@ namespace ShortUrl
 
             if (!string.IsNullOrEmpty(item.FullURL))
             {
-                //todo: подумать, где лучше обрезать ссылку
-
-                //хэш полной ссылки
                 if (string.IsNullOrEmpty(item.ShortURL)) item.HashURL();
 
                 var query = db.Urls
