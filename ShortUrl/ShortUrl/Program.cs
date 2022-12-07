@@ -1,5 +1,3 @@
-using ShortUrl.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

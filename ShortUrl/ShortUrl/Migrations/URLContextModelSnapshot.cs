@@ -21,7 +21,7 @@ namespace ShortUrl.Migrations
             modelBuilder.Entity("ShortUrl.Models.URL", b =>
                 {
                     b.Property<string>("ShortURL")
-                        .HasColumnType("varchar(767)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("FullURL")
                         .IsRequired()
