@@ -46,4 +46,4 @@ app.UseMvc(options =>
                     );
 });
 
-//app.Run();
+app.Run();

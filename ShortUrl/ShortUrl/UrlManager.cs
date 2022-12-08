@@ -36,6 +36,7 @@ namespace ShortUrl
                 {
                     return query.FullURL[(i + 3)..];
                 }
+                return query.FullURL;
             }
             return null;
         }
