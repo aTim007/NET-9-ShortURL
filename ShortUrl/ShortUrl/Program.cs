@@ -1,6 +1,13 @@
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using ShortUrl;
+using ShortUrl.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+////Подключение к БД
+//string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+//builder.Services.AddDbContext<URLContext>(options => options.UseMySQL(connection));
 
 // Add services to the container.
 builder.Services.AddMvc(options =>
@@ -39,6 +46,4 @@ app.UseMvc(options =>
                     );
 });
 
-//app.MapRazorPages();
-
-app.Run();
+//app.Run();

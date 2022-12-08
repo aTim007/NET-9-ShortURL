@@ -10,7 +10,7 @@ namespace ShortUrl.Models
 
     public class URLContext : DbContext
     {
-        public URLContext() { }
+        public URLContext() : base() { }
         public URLContext(DbContextOptions<URLContext> options) : base(options)
         {
 

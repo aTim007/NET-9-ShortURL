@@ -2,62 +2,93 @@
 using System.Text;
 using Crc32 = System.IO.Hashing.Crc32;
 using ShortUrl.Models;
+using System.Security.Policy;
+using System.Collections;
+using System.Numerics;
+using ShortUrl;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 namespace ShortUrl
 {
-    public class HashManager
+    public static class HashManager
     {
-        private readonly Base62Converter base62 = new();
-
-        private readonly URL url = new();
-        public HashManager(ref URL item) { url = item; }
+        private static readonly Base62Converter base62 = new();
 
         /// <summary>
         /// Хэш полной ссылки алгоритмом CRC32 и запись получившегося значения в переменную для короткой ссылки
         /// </summary>
-        public void HashURL()
+        public static string HashURL(string FullURL)
         {
-            var a = Encoding.UTF8.GetString(Crc32.Hash(Encoding.UTF8.GetBytes(url.FullURL)));
-            url.ShortURL = base62.Encode(a);
-            CheckLengthShortURL();
+            var hash = Encoding.UTF8.GetString(Crc32.Hash(Encoding.UTF8.GetBytes(FullURL)));
+            hash = base62.Encode(hash);
+
+            return CheckLengthShortURL(hash);
         }
 
         /// <summary>
-        /// Проверяет, соответсвует ли ссылка диапазону от 7 до 10 символов
+        /// Возвращает строку, длинна которой соответствует диапазону от 7 до 10 символов
         /// </summary>
-        private void CheckLengthShortURL()
+        private static string CheckLengthShortURL(string ShortURL)
         {
-            var lengthShortURL = url.ShortURL.Length;
-            switch (lengthShortURL)
+            do
+            {
+                switch (ShortURL.Length)
+                {
+                    case > 10:
+                        {
+                            ShortURL = ShortURL[..10];
+                            break;
+                        }
+                    case < 7:
+                        {
+                            ShortURL += base62.Encode(ShortURL.Length.ToString());
+                            break;
+                        }
+                }
+            }
+            while (!CheckDiapason(ShortURL.Length));
+            return ShortURL;
+        }
+
+        /// <summary>
+        /// Проверка вхождения длинны строки в диапазон от 7 до 10 символов
+        /// </summary>
+        /// <param name="length">Длинна строки</param>
+        /// <returns></returns>
+        private static bool CheckDiapason(int length)
+        {
+            switch (length)
             {
                 case > 10:
-                    {
-                        url.ShortURL = url.ShortURL[..10];
-                        break;
-                    }
+                    return false;
                 case < 7:
-                    {
-                        var flag = true;
-                        while (flag)
-                        {
-                            url.ShortURL += base62.Encode(lengthShortURL.ToString());
-                            lengthShortURL = url.ShortURL.Length;
-                            if (lengthShortURL >= 7)
-                            {
-                                flag = false;
-                            }
-                        }
-                        break;
-                    }
+                    return false;
             }
+            return true;
         }
 
         /// <summary>
         /// При одинаковом хэше и разных полных ссылках меняем хэш
         /// </summary>
-        public void RepeatHashURL()
+        public static string RepeatHashURL(URL query)
         {
-            url.ShortURL = base62.Encode(url.ShortURL) + url.ShortURL;
-            CheckLengthShortURL();
+            var a = Crc32.Hash(Encoding.UTF8.GetBytes(query.FullURL));
+            var result = query;
+            var ShortUrl = result.ShortURL;
+            while (result != null)
+            {
+                var i = a.Length - 1;
+                while (a[i] >= 127)
+                {
+                    a[i] = 0;
+                    i--;
+                }
+                a[i]++;
+                ShortUrl = base62.Encode(Encoding.UTF8.GetString(a));
+                ShortUrl = CheckLengthShortURL(ShortUrl);
+                result = URLManager.AddShortUrlInDB(ShortUrl);
+            }
+            return ShortUrl;
         }
     }
 }
