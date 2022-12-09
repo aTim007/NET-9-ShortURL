@@ -12,13 +12,18 @@ namespace ShortUrl
                 item.ShortURL = HashManager.HashURL(item.FullURL);
             }
 
+
             var query = AddShortUrlInDB(item.ShortURL);
 
             if (query is not null)
             {
                 if (query.FullURL != item.FullURL)
                 {
-                    item.ShortURL = HashManager.RepeatHashURL(query);
+                    item.ShortURL = HashManager.RepeatHashURL(query);                    
+                }
+                else
+                {
+                    return item.ShortURL;
                 }
             }
             AddUrlInDb(item);
