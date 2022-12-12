@@ -12,13 +12,13 @@ namespace ShortUrl.Migrations
                 name: "Urls",
                 columns: table => new
                 {
-                    ShortURL = table.Column<string>(type: "varchar(767)", nullable: false),
+                    ShortUrl = table.Column<string>(type: "varchar(767)", nullable: false),
                     //Id = table.Column<int>(type: "int", nullable: false),
-                    FullURL = table.Column<string>(type: "text", nullable: false)
+                    FullUrl = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Urls", x => x.ShortURL);
+                    table.PrimaryKey("PK_Urls", x => x.ShortUrl);
                 });
         }
 

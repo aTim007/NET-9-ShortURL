@@ -9,7 +9,7 @@ using ShortUrl.Models;
 
 namespace ShortUrl.Migrations
 {
-    [DbContext(typeof(URLContext))]
+    [DbContext(typeof(UrlContext))]
     [Migration("20221205130614_InitialCreate")]
     partial class InitialCreate
     {
@@ -22,17 +22,17 @@ namespace ShortUrl.Migrations
 
             modelBuilder.Entity("ShortUrl.Models.URL", b =>
                 {
-                    b.Property<string>("ShortURL")
+                    b.Property<string>("ShortUrl")
                         .HasColumnType("varchar(767)");
 
-                    b.Property<string>("FullURL")
+                    b.Property<string>("FullUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.HasKey("ShortURL");
+                    b.HasKey("ShortUrl");
 
                     b.ToTable("Urls");
                 });

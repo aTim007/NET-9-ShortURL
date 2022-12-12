@@ -1,6 +1,6 @@
 ﻿<p>Введите ссылку:</p>
 <form method="post" action="">
-	<input id="URL" type="text" name="FullURL" value="@ViewData["ShortURL"]">
+	<input id="URL" type="text" name="FullUrl" value="@ViewData["ShortUrl"]">
 	<input type="submit" value="Сократить">
 </form>
 
@@ -15,10 +15,10 @@
         <tr>
 
             <th>
-                @Html.DisplayNameFor(model => model.FullURL)
+                @Html.DisplayNameFor(model => model.FullUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShortURL)
+                @Html.DisplayNameFor(model => model.ShortUrl)
             </th>
             <th></th>
         </tr>
@@ -29,10 +29,10 @@
             <tr>
 
                 <td>
-                    @Html.DisplayFor(modelItem => item.FullURL)
+                    @Html.DisplayFor(modelItem => item.FullUrl)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ShortURL)
+                    @Html.DisplayFor(modelItem => item.ShortUrl)
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |

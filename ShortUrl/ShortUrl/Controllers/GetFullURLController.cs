@@ -4,13 +4,20 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ShortUrl.Controllers
 {
-    [Route("/{ShortURL?}")]
-    public class GetFullURLController : Controller
+    [Route("/{ShortUrl?}")]
+    public class GetFullUrlController : Controller
     {
-        [HttpGet]
-        public IActionResult Index(string shortURL)
+        private readonly UrlManager _urlManager;
+
+        public GetFullUrlController(UrlManager urlManager)
         {
-            var result = URLManager.GetFullUrl(shortURL);
+            _urlManager = urlManager;
+        }
+
+        [HttpGet]
+        public IActionResult Index(string shortUrl)
+        {
+            var result = _urlManager.GetFullUrl(shortUrl);
             if (result is null)
             {
                 return Redirect("home");

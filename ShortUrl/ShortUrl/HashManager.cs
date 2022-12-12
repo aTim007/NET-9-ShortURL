@@ -7,47 +7,56 @@ using System.Collections;
 using System.Numerics;
 using ShortUrl;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Data;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using ShortUrl.Controllers;
+using System;
 
 namespace ShortUrl
 {
-    public static class HashManager
+    public class HashManager
     {
-        private static readonly Base62Converter base62 = new();
+        private readonly Base62Converter base62 = new();
+        UrlManager _urlManager;
+        public HashManager(UrlManager context)
+        {
+            _urlManager = context;
+        }
 
         /// <summary>
         /// Хэш полной ссылки алгоритмом CRC32 и запись получившегося значения в переменную для короткой ссылки
         /// </summary>
-        public static string HashURL(string FullURL)
+        public string HashURL(string FullUrl)
         {
-            var hash = Encoding.UTF8.GetString(Crc32.Hash(Encoding.UTF8.GetBytes(FullURL)));
+            var hash = Encoding.UTF8.GetString(Crc32.Hash(Encoding.UTF8.GetBytes(FullUrl)));
             hash = base62.Encode(hash);
 
-            return CheckLengthShortURL(hash);
+            return CheckLengthShortUrl(hash);
         }
 
         /// <summary>
         /// Возвращает строку, длинна которой соответствует диапазону от 7 до 10 символов
         /// </summary>
-        private static string CheckLengthShortURL(string ShortURL)
+        private string CheckLengthShortUrl(string ShortUrl)
         {
             do
             {
-                switch (ShortURL.Length)
+                switch (ShortUrl.Length)
                 {
                     case > 10:
                         {
-                            ShortURL = ShortURL[..10];
+                            ShortUrl = ShortUrl[(ShortUrl.Length - 10)..];
                             break;
                         }
                     case < 7:
                         {
-                            ShortURL += base62.Encode(ShortURL.Length.ToString());
+                            ShortUrl += base62.Encode(ShortUrl.Length.ToString());
                             break;
                         }
                 }
             }
-            while (!CheckDiapason(ShortURL.Length));
-            return ShortURL;
+            while (!CheckDiapason(ShortUrl.Length));
+            return ShortUrl;
         }
 
         /// <summary>
@@ -55,7 +64,7 @@ namespace ShortUrl
         /// </summary>
         /// <param name="length">Длинна строки</param>
         /// <returns></returns>
-        private static bool CheckDiapason(int length)
+        private bool CheckDiapason(int length)
         {
             switch (length)
             {
@@ -68,27 +77,78 @@ namespace ShortUrl
         }
 
         /// <summary>
+        /// Значение байта >127 выдает некоректные значения
+        /// </summary>
+        const int magicNumber = 127;
+        /// <summary>
         /// При одинаковом хэше и разных полных ссылках меняем хэш
         /// </summary>
-        public static string RepeatHashURL(URL query)
+        public string RepeatHashURL(URL query)
         {
-            var a = Crc32.Hash(Encoding.UTF8.GetBytes(query.FullURL));
-            var result = query;
-            var ShortUrl = result.ShortURL;
-            while (result != null)
+            var a = Crc32.Hash(Encoding.UTF8.GetBytes(query.FullUrl));
+            var ShortUrl = query.ShortUrl;
+            while (_urlManager.CheckShortUrl(ShortUrl))
             {
                 var i = a.Length - 1;
-                while (a[i] >= 127)
-                {
-                    a[i] = 0;
-                    i--;
-                }
+                var flag = true;
                 a[i]++;
-                ShortUrl = base62.Encode(Encoding.UTF8.GetString(a));
-                ShortUrl = CheckLengthShortURL(ShortUrl);
-                result = URLManager.AddShortUrlInDB(ShortUrl);
+                while (flag && a[i] >= magicNumber)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            {
+                                if (a[i] >= magicNumber)
+                                {
+                                    a[i] = 0;
+                                    Array.Resize(ref a, a.Length + 1);
+                                    a[0] = 1;
+                                    i = a.Length - 1;
+                                    flag = false;
+                                    break;
+                                }
+                                break;
+                            }
+                        case > 0:
+                            {
+                                a[i] = 0;
+                                if (a[i - 1] >= magicNumber)
+                                {
+                                    i--;
+                                }
+                                else
+                                {
+                                    a[i - 1]++;
+                                }
+                                break;
+                            }
+                        case < 0:
+                            {
+                                flag = false;
+                                break;
+                            }
+                    }
+                }
+                var ShortUrl1 = base62.Encode(Encoding.UTF8.GetString(a));
+                ShortUrl1 = CheckLengthShortUrl(ShortUrl1);
+                if (ShortUrl != ShortUrl1)
+                {
+                    ShortUrl = ShortUrl1;
+                    continue;
+                }
+
+                throw new Exception("Невозможно сократить ссылку");
             }
+
             return ShortUrl;
+        }
+
+        private Random _random = new();
+        public string GetRandomString()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, 5)
+                .Select(s => s[_random.Next(s.Length)]).ToArray());
         }
     }
 }

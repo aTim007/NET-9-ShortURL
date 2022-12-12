@@ -8,7 +8,7 @@ using ShortUrl.Models;
 
 namespace ShortUrl.Migrations
 {
-    [DbContext(typeof(URLContext))]
+    [DbContext(typeof(UrlContext))]
     partial class URLContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -20,17 +20,17 @@ namespace ShortUrl.Migrations
 
             modelBuilder.Entity("ShortUrl.Models.URL", b =>
                 {
-                    b.Property<string>("ShortURL")
+                    b.Property<string>("ShortUrl")
                         .HasColumnType("varchar(10)");
 
-                    b.Property<string>("FullURL")
+                    b.Property<string>("FullUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.HasKey("ShortURL");
+                    b.HasKey("ShortUrl");
 
                     b.ToTable("Urls");
                 });

@@ -3,61 +3,59 @@ using System.Security.Policy;
 
 namespace ShortUrl
 {
-    public static class URLManager
+    public class UrlManager
     {
-        public static string GetShortUrl(URL item)
+        private readonly IUrlRepository<URL> _repository;
+
+        HashManager _hashManager;
+        public UrlManager(UrlContext context)
         {
-            if (string.IsNullOrEmpty(item.ShortURL))
+            _repository = new UrlRepository(context);
+            _hashManager = new HashManager(this);
+        }
+
+        public void GetShortUrl(ref URL item)
+        {
+            if (string.IsNullOrEmpty(item.ShortUrl))
             {
-                item.ShortURL = HashManager.HashURL(item.FullURL);
+                item.ShortUrl = _hashManager.HashURL(item.FullUrl);
             }
 
-
-            var query = AddShortUrlInDB(item.ShortURL);
+            var query = _repository.GetUrl(item.ShortUrl);
 
             if (query is not null)
             {
-                if (query.FullURL != item.FullURL)
+                if (query.FullUrl != item.FullUrl)
                 {
-                    item.ShortURL = HashManager.RepeatHashURL(query);                    
+                    item.ShortUrl = _hashManager.RepeatHashURL(item);
                 }
                 else
                 {
-                    return item.ShortURL;
+                    return;
                 }
             }
-            AddUrlInDb(item);
-            return item.ShortURL;
+            _repository.Add(item);
         }
 
-        public static string? GetFullUrl(string ShortUrl)
+        public string? GetFullUrl(string ShortUrl)
         {
-            var query = AddShortUrlInDB(ShortUrl);
+            var query = _repository.GetUrl(ShortUrl);
 
             if (query is not null)
             {
-                var i = query.FullURL.IndexOf("://");
+                var i = query.FullUrl.IndexOf("://");
                 if (i != -1)
                 {
-                    return query.FullURL[(i + 3)..];
+                    return query.FullUrl[(i + 3)..];
                 }
-                return query.FullURL;
+                return query.FullUrl;
             }
             return null;
         }
-        public static URL? AddShortUrlInDB(string ShortURL)
-        {
-            using var db = new URLContext();
-            var query = db.Urls
-                       .FirstOrDefault(b => b.ShortURL == ShortURL);
-            return query;
-        }
 
-        public static void AddUrlInDb(URL item)
+        public bool CheckShortUrl(string ShortUrl)
         {
-            using var db = new URLContext();
-            db.Urls.Add(item);
-            db.SaveChanges();
+            return _repository.GetUrl(ShortUrl) is not null;
         }
     }
 }

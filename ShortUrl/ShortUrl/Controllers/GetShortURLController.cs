@@ -4,17 +4,24 @@ using ShortUrl.Models;
 namespace ShortUrl.Controllers
 {
     [Route("/home")]
-    public class GetShortURLController : Controller
+    public class GetShortUrlController : Controller
     {
+        private readonly UrlManager _urlManager;
+
+        public GetShortUrlController(UrlManager urlManager)
+        {
+            _urlManager = urlManager;
+        }
+
         [HttpGet]
         public IActionResult Index([FromQuery] URL? item)
         {
             item ??= new();
             if (item is not null)
             {
-                if (!string.IsNullOrEmpty(item.FullURL))
+                if (!string.IsNullOrEmpty(item.FullUrl))
                 {
-                    item.ShortURL = URLManager.GetShortUrl(item);
+                    _urlManager.GetShortUrl(ref item);
                 }
             }
             return Ok(item);
