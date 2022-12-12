@@ -8,9 +8,9 @@ namespace ShortUrl
         private readonly IUrlRepository<URL> _repository;
 
         HashManager _hashManager;
-        public UrlManager(UrlContext context)
+        public UrlManager(IUrlRepository<URL> repository)
         {
-            _repository = new UrlRepository(context);
+            _repository = repository;
             _hashManager = new HashManager(this);
         }
 

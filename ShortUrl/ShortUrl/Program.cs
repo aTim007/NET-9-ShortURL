@@ -2,12 +2,15 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using ShortUrl;
+using ShortUrl.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<UrlContext>(options => options.UseMySQL(connection));
 
+
+builder.Services.AddScoped<IUrlRepository<URL>, UrlRepository>();
 builder.Services.AddScoped<UrlManager>();
 builder.Services.AddScoped<HashManager>();
 
