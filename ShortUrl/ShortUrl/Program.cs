@@ -6,13 +6,19 @@ using ShortUrl.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<UrlContext>(options => options.UseMySQL(connection));
+////string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+//builder.Services.AddDbContext<UrlContext>(options => {
+//    var key = builder.Configuration.GetConnectionString("DefaultConnection");
+//    options.UseMySQL(builder.Configuration.GetConnectionString(key));
+//});
 
+var factory = new Factory(builder.Configuration);
+builder.Services.AddDbContext<UrlContext>(Magic.Setup(builder.Configuration));
 
 builder.Services.AddScoped<IUrlRepository<URL>, UrlRepository>();
 builder.Services.AddScoped<UrlManager>();
 builder.Services.AddScoped<HashManager>();
+
 
 // Add services to the container.
 builder.Services.AddMvc(options =>
