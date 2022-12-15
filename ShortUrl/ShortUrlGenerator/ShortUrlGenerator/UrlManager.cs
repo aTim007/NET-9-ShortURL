@@ -66,29 +66,5 @@ namespace ShortUrlGenerator
             }
             return strBuilder.ToString();
         }
-        //private readonly Base62Converter base62 = new();
-        //private string ConvertToBase62(byte[] bytes)
-        //{
-        //    var key = Encoding.UTF8.GetString(bytes);
-        //    key = base62.Encode(key);
-        //    return CorrectionLength(key);
-        //}
-        //public static string CorrectionLength(string key)
-        //{
-        //    switch (key.Length)
-        //    {
-        //        case > 10:
-        //            {
-        //                key = key[..10];
-        //                break;
-        //            }
-        //        case < 7:
-        //            {
-        //                key += new string('0', 7 - key.Length);
-        //                break;
-        //            }
-        //    }
-        //    return key;
-        //}
     }
 }
