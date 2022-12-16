@@ -16,6 +16,7 @@ namespace ShortUrlGenerator
             {
                 entity.HasKey(e => e.ShortUrl);
                 entity.Property(e => e.FullUrl);
+                entity.HasIndex(e => e.ShortUrl);
             });
         }
     }
