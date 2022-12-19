@@ -3,7 +3,6 @@
     "ShortUrlGenerator": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "shorturl",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

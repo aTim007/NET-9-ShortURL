@@ -11,7 +11,7 @@ namespace ShortUrlGenerator
         public UrlManager(IUrlRepository<URL> repository)
         {
             _repository = repository;
-        }        
+        }
         public string GenerateShortUrl(string fullUrl)
         {
             var hash = GetHash(fullUrl);
@@ -24,7 +24,7 @@ namespace ShortUrlGenerator
                     _repository.Add(new URL()
                     {
                         FullUrl = fullUrl,
-                        ShortUrl= shortUrl
+                        ShortUrl = shortUrl
                     });
                     return shortUrl;
                 }
@@ -35,7 +35,20 @@ namespace ShortUrlGenerator
                 }
                 ChangeHash(ref hash);
             }
-        }       
+        }
+        public string? GetFullUrl(string shortUrl)
+        {
+            var query = _repository.GetUrl(shortUrl);
+            if (query is not null)
+            {
+                var i = query.FullUrl.IndexOf("://");
+                if (i > -1)
+                {
+                    return query.FullUrl[(i + 3)..];
+                }
+            }
+            return query?.FullUrl;
+        }
         private byte[] GetHash(string url)
         {
             var bytes = Crc32.Hash(Encoding.UTF8.GetBytes(url));
@@ -54,7 +67,7 @@ namespace ShortUrlGenerator
         //переделать на декримент
         private static void ChangeHash(ref byte[] bytes)
         {
-           for (int i = bytes.Length-1; i >=0; i-- ) //???
+            for (int i = bytes.Length - 1; i >= 0; i--)
             {
                 if (bytes[i] < byte.MaxValue)
                 {
@@ -63,8 +76,8 @@ namespace ShortUrlGenerator
                 }
                 bytes[i] = 0;
             }
-           //Array.Resize(ref bytes, bytes.Length+1);
-           //bytes[0] = 1;
+            //Array.Resize(ref bytes, bytes.Length+1);
+            //bytes[0] = 1;
         }
 
         private const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -78,6 +91,14 @@ namespace ShortUrlGenerator
                 strBuilder.Append(i < bytes.Length ? alphabet[bytes[i] % alphabetLenght] : alphabet[0]);
             }
             return strBuilder.ToString();
+        }
+
+        private readonly Random _random = new();
+        private string GetRandomString()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, _random.Next(0, 100))
+                .Select(s => s[_random.Next(s.Length)]).ToArray());
         }
     }
 }

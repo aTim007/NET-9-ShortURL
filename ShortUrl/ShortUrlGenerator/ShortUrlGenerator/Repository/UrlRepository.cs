@@ -1,6 +1,6 @@
 ﻿namespace ShortUrlGenerator
 {
-    public class UrlRepository: IUrlRepository<URL>
+    public class UrlRepository : IUrlRepository<URL>
     {
         private readonly UrlContext _db;
         public UrlRepository(UrlContext context)
@@ -16,7 +16,7 @@
 
         public URL? GetUrl(string key)
         {
-            return _db.Urls.FirstOrDefault(b=>b.ShortUrl == key);
+            return _db.Urls.FirstOrDefault(b => b.ShortUrl == key);
         }
     }
 }

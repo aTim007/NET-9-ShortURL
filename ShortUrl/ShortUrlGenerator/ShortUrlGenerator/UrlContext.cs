@@ -5,7 +5,7 @@ namespace ShortUrlGenerator
 {
     public class UrlContext : DbContext
     {
-        public UrlContext( DbContextOptions<UrlContext> options ) :base(options) { }
+        public UrlContext(DbContextOptions<UrlContext> options) : base(options) { }
 
         public DbSet<URL> Urls { get; set; }
 
