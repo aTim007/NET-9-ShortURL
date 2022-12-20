@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var factoryConn = new ConnectionFactory(builder.Configuration);
 builder.Services.AddDbContext<UrlContext>(options => factoryConn.CreateObjectForOptions().CallOptionsMethod(options));
-builder.Services.AddScoped<IUrlRepository<URL>, UrlRepository>();
+builder.Services.AddScoped<IUrlRepository, UrlRepository>();
 builder.Services.AddScoped<UrlManager>();
 
 builder.Services.AddControllers();
@@ -19,4 +19,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

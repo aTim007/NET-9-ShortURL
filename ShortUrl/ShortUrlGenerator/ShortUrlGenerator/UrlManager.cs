@@ -6,22 +6,22 @@ namespace ShortUrlGenerator
 {
     public class UrlManager
     {
-        private readonly IUrlRepository<URL> _repository;
+        private readonly IUrlRepository _repository;
 
-        public UrlManager(IUrlRepository<URL> repository)
+        public UrlManager(IUrlRepository repository)
         {
             _repository = repository;
         }
-        public string GenerateShortUrl(string fullUrl)
+        public async Task<string> GenerateShortUrl(string fullUrl)
         {
             var hash = GetHash(fullUrl);
             while (true)
             {
                 var shortUrl = ConvertToBase62(hash);
-                var query = _repository.GetUrl(shortUrl);
+                var query = await _repository.GetUrl(shortUrl);
                 if (query is null)
                 {
-                    _repository.Add(new URL()
+                    await _repository.Add(new URL()
                     {
                         FullUrl = fullUrl,
                         ShortUrl = shortUrl
@@ -36,9 +36,9 @@ namespace ShortUrlGenerator
                 ChangeHash(ref hash);
             }
         }
-        public string? GetFullUrl(string shortUrl)
+        public async Task<string?> GetFullUrl(string shortUrl)
         {
-            var query = _repository.GetUrl(shortUrl);
+            var query = await _repository.GetUrl(shortUrl);
             if (query is not null)
             {
                 var i = query.FullUrl.IndexOf("://");
@@ -56,7 +56,7 @@ namespace ShortUrlGenerator
             Array.Resize(ref hash, 10);
             for (int i = bytes.Length, j = 0; i < maxLenght; i++, j++)
             {
-                if (!(j < bytes.Length))
+                if (j >= bytes.Length)
                 {
                     j = 0;
                 }
@@ -94,10 +94,10 @@ namespace ShortUrlGenerator
         }
 
         private readonly Random _random = new();
-        private string GetRandomString()
+        public string GetRandomString()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, _random.Next(0, 100))
+            return new string(Enumerable.Repeat(chars, _random.Next(50, 100))
                 .Select(s => s[_random.Next(s.Length)]).ToArray());
         }
     }

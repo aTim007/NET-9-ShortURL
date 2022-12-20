@@ -1,6 +1,8 @@
-﻿namespace ShortUrlGenerator
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace ShortUrlGenerator
 {
-    public class UrlRepository : IUrlRepository<URL>
+    public class UrlRepository : IUrlRepository
     {
         private readonly UrlContext _db;
         public UrlRepository(UrlContext context)
@@ -8,15 +10,15 @@
             _db = context;
         }
 
-        public void Add(URL item)
+        public async Task Add(URL item)
         {
-            _db.Add(item);
-            _db.SaveChanges();
+            await _db.AddAsync(item);
+            await _db.SaveChangesAsync();
         }
 
-        public URL? GetUrl(string key)
+        public async Task<URL?> GetUrl(string key)
         {
-            return _db.Urls.FirstOrDefault(b => b.ShortUrl == key);
+            return await _db.Urls.FirstOrDefaultAsync(b => b.ShortUrl == key );
         }
     }
 }

@@ -28,17 +28,17 @@ namespace ShortUrlGenerator.Controllers
 
         [Route("/shorturl")]
         [HttpGet]
-        public IActionResult GetShortUrl([FromQuery] string url)
+        public async Task<IActionResult> GetShortUrl([FromQuery] string url)
         {
-            var result = _urlManager.GenerateShortUrl(url);
+            var result = await _urlManager.GenerateShortUrl(url);
             return Ok(result);
         }
 
         [Route("/fullurl")]
         [HttpGet]
-        public IActionResult GetFullUrl([FromQuery] string url)
+        public async Task<IActionResult> GetFullUrl([FromQuery] string url)
         {
-            var result = _urlManager.GetFullUrl(url);
+            var result = await _urlManager.GetFullUrl(url);
             return result is null ? Get("Проверьте вашу ссылку") : Redirect("https://" + result);
         }
         private string Message(string message)

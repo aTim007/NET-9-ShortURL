@@ -1,9 +1,13 @@
 ﻿
 namespace ShortUrlGenerator
 {
-    public interface IUrlRepository<T> where T : URL
+    public interface IUrlRepository :BaseRepository<URL>
     {
-        T? GetUrl(string key);
-        void Add(T item);
     }
+
+    public interface BaseRepository<T> 
+    {
+        Task<T?> GetUrl(string key);
+        Task Add(T item);
+    } 
 }
